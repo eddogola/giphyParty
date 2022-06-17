@@ -49,9 +49,9 @@ async function getResults(link) {
 }
 
 function showResults(results) {
-    for (let gif of results) {
+    for (let i = 0; i < results.length; i++) {
         containerDiv.innerHTML += `
-        <img src="${gif.url}" alt="${gif.title}"/>`
+        <img src='${results[i].images.downsized.url}' alt="${results[i].title}"/>`
     }
 }
 
