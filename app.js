@@ -7,6 +7,7 @@ const RATING = 'g';
 const searchBar = document.querySelector('#search-bar');
 const searchButton = document.querySelector('#search-button');
 const containerDiv = document.querySelector('.results');
+const LoadMoreButton = document.querySelector("#load-more");
 
 /**
  * getRequestParams combines search query with other default request parameters into an object
@@ -48,12 +49,21 @@ async function getResults(link) {
     return results.data;
 }
 
+function updateOffset(params) {
+    params.offset += LIMIT;
+
+    return params;
+}
+
 function showResults(results) {
+    console.log("things are pretty weird right now");
     for (let i = 0; i < results.length; i++) {
         containerDiv.innerHTML += `
-        <img src='${results[i].images.downsized.url}' alt="${results[i].title}"/>`
+        <img src="${results[i].images.downsized.url}" alt="${results[i].title}"/>`
     }
 }
+
+var params;
 
 function addEventListeners() {
     searchButton.addEventListener('click', () => {
@@ -62,7 +72,13 @@ function addEventListeners() {
             results = getResults(createRequestLink(params));
             showResults(results);
         }
-    })
+    });
+
+    LoadMoreButton.addEventListener('click', () => {
+        params = updateOffset(params);
+        results = getResults(createRequestLink(params));
+        showResults(results);
+    });
 }
 
 window.onload = function() {
