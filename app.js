@@ -34,50 +34,51 @@ function createRequestLink(params) {
 }
 
 /**
- * getResults asynchronously gets GIFs from the API matching the search query
+ * showResults asynchronously gets GIFs from the API matching the search query
+ * and appends them to the main container div
  * @param {string} link - link representing request to API
  * @returns an array of GIF objects
  */
-async function getResults(link) {
+async function showResults(link) {
     const response = await fetch(link);
     const results = await response.json();
 
-    for (let gif of results.data) {
-        containerDiv.innerHTML += `<img src="${gif.url}" alt="${gif.title}"/>`
+    for (let i = 0; i < results.data.length; i++) {
+        console.log("are we here")
+        containerDiv.innerHTML += `
+        <img src="${results.data[i].images.downsized.url}" alt="${results.data[i].title}"/>`
     }
-
-    return results.data;
 }
 
+/**
+ * updateOffset increments the offset value of the request parameters object
+ * by the fixed LIMIT value to enable loading more items
+ * @param {object} params - request parameters object
+ * @returns new, updated parameters object
+ */
 function updateOffset(params) {
     params.offset += LIMIT;
 
     return params;
 }
 
-function showResults(results) {
-    console.log("things are pretty weird right now");
-    for (let i = 0; i < results.length; i++) {
-        containerDiv.innerHTML += `
-        <img src="${results[i].images.downsized.url}" alt="${results[i].title}"/>`
-    }
-}
-
-var params;
-
+/**
+ * addEventListeners listens for clicks on both the search and load more button
+ * adding gif items to the container div accordingly
+ */
 function addEventListeners() {
+    var params;
+
     searchButton.addEventListener('click', () => {
         if (searchBar.value != "") {
             params = getRequestParams(searchBar.value);
-            results = getResults(createRequestLink(params));
-            showResults(results);
+            showResults(createRequestLink(params));
         }
     });
 
     LoadMoreButton.addEventListener('click', () => {
         params = updateOffset(params);
-        results = getResults(createRequestLink(params));
-        showResults(results);
+        showResults(createRequestLink(params));
     });
 }
 
